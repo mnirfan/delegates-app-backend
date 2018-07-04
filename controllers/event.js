@@ -39,5 +39,14 @@ module.exports = {
           res.status(500).json(err)
         })
     }
+  },
+  detail: function(req, res) {
+    Event.findById(req.query.id)
+    .then(event => {
+      res.json(event)
+    })
+    .catch(err => {
+      res.status(500).json(err)
+    })
   }
 }
