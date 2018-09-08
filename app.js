@@ -14,6 +14,10 @@ mongoose.connect(process.env.MONGODB_URL)
 var index = require('./routes/index');
 var users = require('./routes/users');
 var events = require('./routes/event.js');
+var subs = require('./routes/subscription');
+var announcement = require('./routes/announcement');
+var selection = require('./routes/selection');
+var auth = require('./middleware/auth')
 
 var app = express();
 
@@ -29,10 +33,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use('/api/static',express.static(path.join(__dirname, 'public',), {maxAge: '1d'}));
 
-app.use('/', index);
 app.use('/users', users);
 app.use(cors())
+app.use('/', index);
+app.use(auth)
 app.use('/api/event', events)
+app.use('/api/subs', subs)
+app.use('/api/announcement', announcement)
+app.use('/api/selection', selection)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
