@@ -41,10 +41,12 @@ async function sendPush(data, scope = 'all') {
 
 module.exports = {
   create: async function (req, res) {
-    var images = req.files.map(file => {
-      return file.filename
-    })
+    console.log(req.body, req.files);
+    
     try {
+      var images = await req.files.map(file => {
+        return '/api/static/uploads/'+file.filename
+      })
       var announcement = await Announcement.create({
         title: req.body.title,
         subtitle: req.body.subtitle,
@@ -68,21 +70,23 @@ module.exports = {
         res.status(500).json({ message: 'failed' })
       }
     }
-    catch (err) {
-      images.forEach(image => {
-        fs.unlink(`public/uploads/${image}`)
+    catch (error) {
+      req.files.forEach(image => {
+        fs.unlink(`public/uploads/${image.filename}`, (err) => {
+          if (err) console.log(err.message);
+        })
       })
       res.status(500).json({
-        message: err.message
+        message: error.message
       })
     }
   },
   all: async function (req, res) {
     try {
-      var annc = await Announcement.find({})
+      var annc = await Announcement.find({}, null, {sort: '-createdAt'})
       res.json(annc)
-    } catch (err) {
-      res.status(500).json(err.message)
+    } catch (error) {
+      res.status(500).json(error.message)
     }
   },
   detail: async function (req, res) {
@@ -90,7 +94,7 @@ module.exports = {
       var annc = await Announcement.findById(req.params.id)
       res.json(annc)
     } catch (error) {
-      res.status(500).json(err.message)
+      res.status(500).json(error.message)
     }
   }
 }
