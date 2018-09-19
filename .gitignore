@@ -31,5 +31,10 @@ npm-debug.log
 
 .vscode
 public/uploads/*
+!public/uploads/*/
 !public/uploads/README.md
+public/uploads/thumbnails/*
+!public/uploads/thumbnails/README.md
+public/uploads/hires/*
+!public/uploads/hires/README.md
 .env

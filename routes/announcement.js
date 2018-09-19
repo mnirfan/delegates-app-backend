@@ -5,7 +5,7 @@ var announcementController = require('../controllers/announcement')
 
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'public/uploads')
+    cb(null, 'public/uploads/hires')
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + '-' + file.originalname)

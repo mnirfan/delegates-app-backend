@@ -3,6 +3,7 @@ var axios = require('axios')
 var Announcement = require('../models/Announcement')
 var User = require('../models/User')
 var webPush = require('web-push')
+var sharp = require('sharp')
 
 async function sendPush(data, scope = 'all') {
   try {
@@ -44,8 +45,15 @@ module.exports = {
     console.log(req.body, req.files);
     
     try {
-      var images = await req.files.map(file => {
-        return '/api/static/uploads/'+file.filename
+      var images = []
+      req.files.forEach(file => {
+        images.push({
+          original: '/api/static/uploads/hires/' + file.filename,
+          thumbnail: '/api/static/uploads/thumbnails/' + file.filename
+        })
+        sharp(file.destination + '/' + file.filename)
+          .resize(100, null)
+          .toFile(file.destination + '/../thumbnails/' + file.filename)
       })
       var announcement = await Announcement.create({
         title: req.body.title,
@@ -83,7 +91,7 @@ module.exports = {
   },
   all: async function (req, res) {
     try {
-      var annc = await Announcement.find({}, null, {sort: '-createdAt'})
+      var annc = await Announcement.find({}, 'title content scope createdAt', {sort: '-createdAt'})
       res.json(annc)
     } catch (error) {
       res.status(500).json(error.message)
