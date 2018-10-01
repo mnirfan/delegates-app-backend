@@ -15,30 +15,25 @@ var eventSchema = new Schema({
     required: true,
     type: String
   },
-  time: {
-    start: {
-      required: true,
-      type: String
-    },
-    end: {
-      required: true,
-      type: String
-    },
+  start: {
+    required: true,
+    type: String
   },
-  date: {
-    required: false,
-    type: Date
+  end: {
+    required: true,
+    type: String
   },
   location: {
     required: true,
     type: String
   },
-  now: {
-    required: true,
-    type: Boolean,
-    default: false
-  },
-})
+  description: {
+    type: String
+  }
+}, {
+    timestamps: true
+  }
+)
 
 var Event = mongoose.model('Event', eventSchema)
 module.exports = Event
