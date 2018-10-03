@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "dev": "nodemon ./bin/www"
+    "dev": "nodemon ./bin/www",
+    "seed": "node ./seed/seeder.js"
   },
   "dependencies": {
     "axios": "^0.18.0",
@@ -23,5 +24,8 @@
     "serve-favicon": "~2.4.2",
     "sharp": "^0.20.8",
     "web-push": "^3.3.2"
+  },
+  "devDependencies": {
+    "mongoose-seed": "^0.5.1"
   }
 }

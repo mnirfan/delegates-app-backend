@@ -17,12 +17,18 @@ module.exports = {
     try {
       var user = await User.findOne({ userId: req.user.sub })
       console.log(user);
-      
-      if (!user) user = await User.create({ userId: req.user.sub, scope: 'digital' })
+      var scopes = req.user.roles.map(role => {
+        var parts = role.split('_')
+        return parts[2] || ''
+      })
+      if (!user) user = await User.create({ userId: req.user.sub, scope: scopes })
       var subs = {
-        endpoint: req.body.subscription.endpoint,
-        auth: req.body.subscription.keys.auth,
-        p256dh: req.body.subscription.keys.p256dh
+        stamp: req.body.stamp,
+        data: {
+          endpoint: req.body.subscription.endpoint,
+          auth: req.body.subscription.keys.auth,
+          p256dh: req.body.subscription.keys.p256dh
+        }
       }
       user.subscription.push(subs)
       await user.save()
@@ -33,6 +39,15 @@ module.exports = {
       res.status(500).json({
         message: error.message
       })
+    }
+  },
+
+  unregister: async function(req, res) {
+    try {
+      var user = await User.updateOne({userId: req.user.sub}, {$pull: {subscription: {stamp: req.body.stamp}}})
+      res.json(user)
+    } catch (error) {
+      res.status(500).json(error.message)
     }
   },
 

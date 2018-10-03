@@ -33,10 +33,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use('/api/static',express.static(path.join(__dirname, 'public',), {maxAge: '1d'}));
 
-app.use('/users', users);
 app.use(cors())
 app.use('/', index);
 app.use(auth)
+app.use('/api/user', users);
 app.use('/api/event', events)
 app.use('/api/class', classes)
 app.use('/api/subs', subs)

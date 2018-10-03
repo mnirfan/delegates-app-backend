@@ -1,18 +1,13 @@
 var Class = require('../models/Class')
 var User = require('../models/User')
+var Setting = require('../models/Setting')
 const print = console.log
 
 module.exports = {
   all: async function(req, res) {
     try {
       var kelases = await Class.find({})
-      var user = await User.findOne({userId: req.user.sub})
-      var checkuser = await Class.find({participants: {$in: [user._id]}})
-      res.json({
-        class: kelases,
-        registered: checkuser.length > 0,
-        me: user._id
-      })
+      res.json(kelases)
     } catch (error) {
       res.status(500).json(error.message)
     }
@@ -46,13 +41,14 @@ module.exports = {
   },
   update: async function(req, res) {
     try {
+      print(req.body.id)
       var kelas = await Class.findById(req.body.id)
-      print(req.body)
       if (!kelas) {
         res.status(404).json('kelas tidak ditemukan')
         return
       }
       kelas.name = req.body.name
+      if (req.file) kelas.image = '/api/static/uploads/' + req.file.filename
       kelas.max = req.body.max
       kelas.description = req.body.description
       kelas.location = req.body.location
@@ -102,6 +98,24 @@ module.exports = {
       else {
         res.json({code: 'full', message: 'Kelas penuh'})
       }
+    } catch (error) {
+      res.status(500).json(error.message)
+    }
+  },
+  setting: async function(req, res) {
+    try {
+      var classSetting = await Setting.findOne({name: 'class-open'})
+      res.json(classSetting)
+    } catch (error) {
+      res.status(500).json(error.message)
+    }
+  },
+  toggle: async function(req, res) {
+    try {
+      var classSetting = await Setting.findOne({ name: 'class-open' })
+      classSetting.set('value', req.body.isOpen)
+      await classSetting.save()
+      res.json(classSetting)
     } catch (error) {
       res.status(500).json(error.message)
     }

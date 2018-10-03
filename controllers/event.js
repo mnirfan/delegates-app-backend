@@ -82,6 +82,8 @@ module.exports = {
     .then(event => {
       if(event) {
         if (req.file) {
+          console.log(req.file);
+          
           var oldImage = event.image.split('/api/static/')[1]
           event.image = '/api/static/uploads/' + req.file.filename
         }

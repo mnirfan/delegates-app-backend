@@ -18,10 +18,10 @@ async function sendPush(data, scope = 'all') {
      users.forEach(user => {
       var userSubs = user.subscription.map(sub => {
         return {
-          endpoint: sub.endpoint,
+          endpoint: sub.data.endpoint,
           keys: {
-            auth: sub.auth,
-            p256dh: sub.p256dh
+            auth: sub.data.auth,
+            p256dh: sub.data.p256dh
           }
         }
       })
@@ -91,7 +91,21 @@ module.exports = {
   },
   all: async function (req, res) {
     try {
-      var annc = await Announcement.find({}, 'title content scope createdAt', {sort: '-createdAt'})
+      var scopes = req.user.roles.map(role => {
+        var parts = role.split('_')
+        return parts[2] ? parts[2].replace('-', ' ').toLowerCase() : ''
+      })
+      var roles = req.user.roles.map(role => {
+        var parts = role.split('_')
+        return parts[0] ? parts[0].toLowerCase() : ''
+      })
+      var annc = []
+      if (roles.indexOf('RANGER') >= 0) {
+        annc = await Announcement.find({}, 'title content scope createdAt', { sort: '-createdAt' })
+      }
+      else{
+        annc = await Announcement.find({scope: {$in: ['all', ...scopes]}}, 'title content scope createdAt', {sort: '-createdAt'})
+      }
       res.json(annc)
     } catch (error) {
       res.status(500).json(error.message)
