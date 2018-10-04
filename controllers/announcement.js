@@ -65,7 +65,7 @@ module.exports = {
       })
       if (announcement) {
         var pushData = {
-          url: `/announcement/${announcement._id}`,
+          url: `/announcement`,
           title: 'Pengumuman Baru',
           content: announcement.title,
           scope: announcement.scope
