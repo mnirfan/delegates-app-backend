@@ -100,7 +100,9 @@ module.exports = {
         return parts[0] ? parts[0].toLowerCase() : ''
       })
       var annc = []
-      if (roles.indexOf('RANGER') >= 0) {
+      console.log(roles);
+      
+      if (roles.indexOf('ranger') >= 0) {
         annc = await Announcement.find({}, 'title content scope createdAt', { sort: '-createdAt' })
       }
       else{
