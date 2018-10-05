@@ -70,7 +70,7 @@ module.exports = {
           content: announcement.title,
           scope: announcement.scope
         }
-        var result = await sendPush(pushData)
+        var result = await sendPush(pushData, announcement.scope)
         console.log(result);
         res.json(announcement)
       }
