@@ -6,7 +6,7 @@ let ClassSchema = new mongoose.Schema({
   location: { type: String, required: true },
   panelist: { type: String, required: true },
   participants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User'}],
-  max: { type: String, required: true },
+  max: { type: Number, required: true },
   image: { type: String, required: true },
 }, {
     timestamps: true

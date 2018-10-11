@@ -13,15 +13,15 @@ module.exports = {
   },
 
   register: async function(req, res) {
-    console.log(req.body.subscription, req.user)
+    // console.log(req.body.subscription, req.user)
     try {
       var user = await User.findOne({ userId: req.user.sub })
-      console.log(user);
+      // console.log(user);
       var scopes = req.user.roles.map(role => {
         var parts = role.split('_')
         return parts[2] || ''
       })
-      if (!user) user = await User.create({ userId: req.user.sub, scope: scopes })
+      if (!user) user = await User.create({ userId: req.user.sub, scope: scopes, name: req.user.name })
       var subs = {
         stamp: req.body.stamp,
         data: {
@@ -45,9 +45,9 @@ module.exports = {
   unregister: async function(req, res) {
     try {
       var user = await User.updateOne({userId: req.user.sub}, {$pull: {subscription: {stamp: req.body.stamp}}})
-      res.json(user)
+      res.json({message: 'unregistered'})
     } catch (error) {
-      res.status(500).json(error.message)
+      res.status(500).json({message: error.message})
     }
   },
 

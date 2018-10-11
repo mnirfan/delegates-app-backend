@@ -44,13 +44,12 @@ module.exports = {
         dresscode: req.body.dresscode,
         start: req.body.timeStart,
         end: req.body.timeEnd,
-        date: req.body.date,
         location: req.body.location,
         description: req.body.description
       })
       .then(event => {
         if (event) {
-          res.json('created')
+          res.json(event)
         }
         else {
           res.json('not created')
@@ -123,7 +122,7 @@ module.exports = {
         })
       }
       else {
-        res.status(404).json('tidak ditemukan')
+        res.status(404).json(req.body.id + ' tidak ditemukan')
       }
     })
     .catch(error => {

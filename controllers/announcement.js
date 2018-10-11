@@ -42,7 +42,7 @@ async function sendPush(data, scope = 'all') {
 
 module.exports = {
   create: async function (req, res) {
-    console.log(req.body, req.files);
+    // console.log(req.body, req.files);
     
     try {
       var images = []
@@ -55,12 +55,12 @@ module.exports = {
           .resize(100, null)
           .toFile(file.destination + '/../thumbnails/' + file.filename)
       })
+      var user = await User.findOne({userId: req.user.sub})
       var announcement = await Announcement.create({
         title: req.body.title,
-        subtitle: req.body.subtitle,
         content: req.body.content,
         images: images,
-        author: req.user.name,
+        author: user._id,
         scope: req.body.scope
       })
       if (announcement) {
@@ -71,7 +71,7 @@ module.exports = {
           scope: announcement.scope
         }
         var result = await sendPush(pushData, announcement.scope)
-        console.log(result);
+        // console.log(result);
         res.json(announcement)
       }
       else {
@@ -100,7 +100,7 @@ module.exports = {
         return parts[0] ? parts[0].toLowerCase() : ''
       })
       var annc = []
-      console.log(roles);
+      // console.log(roles);
       
       if (roles.indexOf('ranger') >= 0) {
         annc = await Announcement.find({}, 'title content scope createdAt', { sort: '-createdAt' })
@@ -115,7 +115,7 @@ module.exports = {
   },
   detail: async function (req, res) {
     try {
-      var annc = await Announcement.findById(req.params.id)
+      var annc = await Announcement.findById(req.params.id).populate('author')
       res.json(annc)
     } catch (error) {
       res.status(500).json(error.message)

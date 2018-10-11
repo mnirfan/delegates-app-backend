@@ -41,7 +41,6 @@ module.exports = {
   },
   update: async function(req, res) {
     try {
-      print(req.body.id)
       var kelas = await Class.findById(req.body.id)
       if (!kelas) {
         res.status(404).json('kelas tidak ditemukan')
@@ -67,7 +66,7 @@ module.exports = {
         return
       }
       await Class.deleteOne({_id: req.body.id})
-      res.json('deleted')
+      res.json('terhapus')
     } catch (error) {
       res.status(500).json(error.message)
     }
@@ -76,6 +75,7 @@ module.exports = {
     try {
       var kelas = await Class.findById(req.body.classId)
       var user = await User.findOne({userId: req.user.sub})
+      var isOpen = await Setting.findOne({name: 'class-open'})
       if (!kelas) {
         res.status(404).json('kelas tidak ditemukan')
         return
@@ -83,6 +83,9 @@ module.exports = {
       if (!user) {
         res.status(404).json('user tidak ditemukan')
         return
+      }
+      if (isOpen.value !== true) {
+        res.status(410).json('not-open')
       }
       if (kelas.participants.indexOf(user._id) >= 0) {
         res.json('sudah pernah masuk')
@@ -96,7 +99,7 @@ module.exports = {
         res.json('Berhasil masuk kelas')
       }
       else {
-        res.json({code: 'full', message: 'Kelas penuh'})
+        res.status(410).json('full')
       }
     } catch (error) {
       res.status(500).json(error.message)
@@ -105,6 +108,9 @@ module.exports = {
   setting: async function(req, res) {
     try {
       var classSetting = await Setting.findOne({name: 'class-open'})
+      if (!classSetting) {
+        classSetting = await Setting.create({ name: 'class-open', value: false })
+      }
       res.json(classSetting)
     } catch (error) {
       res.status(500).json(error.message)
@@ -113,6 +119,9 @@ module.exports = {
   toggle: async function(req, res) {
     try {
       var classSetting = await Setting.findOne({ name: 'class-open' })
+      if (!classSetting) {
+        classSetting = await Setting.create({name: 'class-open', value: false})
+      }
       classSetting.set('value', req.body.isOpen)
       await classSetting.save()
       res.json(classSetting)

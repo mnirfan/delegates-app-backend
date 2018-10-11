@@ -11,7 +11,7 @@ module.exports = function (req, res, next) {
       }
       else {
         req.user = decoded
-        console.log(decoded);
+        if (process.env.NODE_ENV !== 'test') console.log(decoded);
         
         next()
       }

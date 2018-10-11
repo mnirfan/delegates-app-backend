@@ -24,8 +24,8 @@ module.exports = {
         else return null
       })
       scopes = scopes.filter(s => s)
-      console.log(scopes);
-      var user = await User.findOneAndUpdate({ userId: req.user.sub }, { userId: req.user.sub, $set: { scope: scopes }}, {new: true, upsert: true})
+      // console.log(scopes);
+      var user = await User.findOneAndUpdate({ userId: req.user.sub }, { userId: req.user.sub, name: req.user.name, $set: { scope: scopes }}, {new: true, upsert: true})
       res.json(user)
     } catch (error) {
       res.status(500).json(error.message)

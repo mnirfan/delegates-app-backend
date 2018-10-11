@@ -13,7 +13,10 @@ var userSchema = new Schema({
   }],
   userId: { type: String, required: true },
   scope: [{ type: String, required: true }],
-})
+  name: { type: String, required: true },
+}, {
+    timestamps: true
+  })
 
 var User = mongoose.model('User', userSchema)
 module.exports = User
