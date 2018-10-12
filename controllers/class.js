@@ -6,8 +6,18 @@ const print = console.log
 module.exports = {
   all: async function(req, res) {
     try {
-      var kelases = await Class.find({})
+      var kelases = await Class.find({}).sort('createdAt')
       res.json(kelases)
+    } catch (error) {
+      res.status(500).json(error.message)
+    }
+  },
+  registered: async function (req, res) {
+    try {
+      var user = await User.findOne({ userId: req.user.sub })
+      var kelas = await Class.findOne({ participants: user._id })
+      if (kelas) res.json(true)
+      else res.json(false)
     } catch (error) {
       res.status(500).json(error.message)
     }

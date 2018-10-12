@@ -15,6 +15,7 @@ var upload = multer({ storage })
 router.get('/', classController.all);
 router.post('/create', upload.single('image'), classController.create)
 router.post('/attend', classController.attend)
+router.get('/registered', classController.registered);
 router.post('/update', upload.single('image'), classController.update)
 router.delete('/delete', classController.destroy)
 router.get('/setting', classController.setting)
