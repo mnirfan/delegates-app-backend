@@ -120,5 +120,13 @@ module.exports = {
     } catch (error) {
       res.status(500).json(error.message)
     }
+  },
+  latest: async function (req, res) {
+    try {
+      var annc = await Announcement.findOne({}).sort('-createdAt')
+      res.json(annc)
+    } catch (error) {
+      res.status(500).json(error.message)
+    }
   }
 }
