@@ -37,6 +37,10 @@ module.exports = {
     })
   },
   create: function(req, res) {
+    if (!req.user.roles.find(role => /^RANGER/.test(role))) {
+      res.status(403).json('permission denied')
+      return
+    }
     if (req.file) {
       Event.create({
         title: req.body.title,
@@ -77,6 +81,10 @@ module.exports = {
     })
   },
   update: function(req, res) {
+    if (!req.user.roles.find(role => /^RANGER/.test(role))) {
+      res.status(403).json('permission denied')
+      return
+    }
     Event.findById(req.body.id)
     .then(event => {
       if(event) {
@@ -108,6 +116,10 @@ module.exports = {
     })
   },
   destroy: function(req, res) {
+    if (!req.user.roles.find(role => /^RANGER/.test(role))) {
+      res.status(403).json('permission denied')
+      return
+    }
     Event.findById(req.body.id)
     .then(event => {
       if (event) {

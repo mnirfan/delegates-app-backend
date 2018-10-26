@@ -9,7 +9,7 @@ async function sendPush(data, scope = 'all') {
   try {
     var users
     if (scope === 'all') {
-      users = await User.find({})
+      users = await User.find({ 'scope.0': { $exists: true } }) // all user has room (delegates)
     }
     else {
       users = await User.find({ scope })
@@ -43,7 +43,10 @@ async function sendPush(data, scope = 'all') {
 module.exports = {
   create: async function (req, res) {
     // console.log(req.body, req.files);
-    
+    if (!req.user.roles.find(role => /^RANGER/.test(role))) {
+      res.status(403).json('permission denied')
+      return
+    }
     try {
       var images = []
       req.files.forEach(file => {

@@ -23,6 +23,10 @@ module.exports = {
     }
   },
   create: async function(req, res) {
+    if (!req.user.roles.find(role => /^RANGER/.test(role))) {
+      res.status(403).json('permission denied')
+      return
+    }
     try {
       if (!req.file) {
         res.status(500).json('no image provided')
@@ -50,6 +54,10 @@ module.exports = {
     }
   },
   update: async function(req, res) {
+    if (!req.user.roles.find(role => /^RANGER/.test(role))) {
+      res.status(403).json('permission denied')
+      return
+    }
     try {
       var kelas = await Class.findById(req.body.id)
       if (!kelas) {
@@ -69,6 +77,10 @@ module.exports = {
     }
   },
   destroy: async function(req, res) {
+    if (!req.user.roles.find(role => /^RANGER/.test(role))) {
+      res.status(403).json('permission denied')
+      return
+    }
     try {
       var kelas = await Class.findById(req.body.id)
       if (!kelas) {
@@ -82,6 +94,10 @@ module.exports = {
     }
   },
   attend: async function(req, res) {
+    if (req.user.roles.find(role => /^RANGER/.test(role))) {
+      res.status(403).json("ranger can't attend a class :(")
+      return
+    }
     try {
       var kelas = await Class.findById(req.body.classId)
       var user = await User.findOne({userId: req.user.sub})
@@ -127,6 +143,10 @@ module.exports = {
     }
   },
   toggle: async function(req, res) {
+    if (!req.user.roles.find(role => /^RANGER/.test(role))) {
+      res.status(403).json('permission denied')
+      return
+    }
     try {
       var classSetting = await Setting.findOne({ name: 'class-open' })
       if (!classSetting) {
